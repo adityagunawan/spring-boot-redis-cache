@@ -28,6 +28,14 @@ public class UserController {
         return userRepository.findOne(Long.valueOf(userId));
     }
 
+//    @Cacheable(value = "users", key="#userId.concat('-').concat(#followers)")
+    @Cacheable(value = "users", keyGenerator = "keyGenerator")
+    @RequestMapping(value = "/two-params/{userId}/{followers}", method = RequestMethod.GET)
+    public User getUser(@PathVariable Long userId, @PathVariable Long followers) {
+        LOG.info("Getting user with ID {} and follower {}.", userId, followers);
+        return userRepository.findOneByIdAndFollowers(userId, followers);
+    }
+
     @CachePut(value = "users", key = "#user.id")
     @PutMapping("/update")
     public User updatePersonByID(@RequestBody User user) {
